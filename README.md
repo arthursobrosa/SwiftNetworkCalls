@@ -3,7 +3,7 @@
 #### This repo offers three different ways of performing network calls in Swift: 
 #### - *Async/Await*
 #### - *Combine*
-#### - *Completions*
+#### - *Closures*
 ##### The project was made using UIKit ViewCode and consists in a list of characters from the <a href="http://rickandmortyapi.com">Rick and Morty API</a>.
 
 ---

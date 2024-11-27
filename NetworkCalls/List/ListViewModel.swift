@@ -11,9 +11,9 @@ import Foundation
 class ListViewModel {
     // MARK: - Service to get model
     
-    private let completionService: CompletionService
-    private let combineService: CombineService
     private let asyncService: AsyncService
+    private let combineService: CombineService
+    private let closureService: ClosureService
     
     // MARK: - Properties
     
@@ -21,7 +21,7 @@ class ListViewModel {
     enum ServiceType {
         case async
         case combine
-        case completion
+        case closure
     }
     
     private let serviceType: ServiceType
@@ -35,14 +35,14 @@ class ListViewModel {
     
     // MARK: - Initializer
     
-    init(completionService: CompletionService = CompletionService(),
+    init(asyncService: AsyncService = AsyncService(),
          combineService: CombineService = CombineService(),
-         asyncService: AsyncService = AsyncService(),
+         closureService: ClosureService = ClosureService(),
          serviceType: ServiceType) {
         
-        self.completionService = completionService
-        self.combineService = combineService
         self.asyncService = asyncService
+        self.combineService = combineService
+        self.closureService = closureService
         self.serviceType = serviceType
     }
     
@@ -54,8 +54,8 @@ class ListViewModel {
             fetchCharactersWithAsync()
         case .combine:
             fetchCharactersWithCombine()
-        case .completion:
-            fetchCharactersWithCompletion()
+        case .closure:
+            fetchCharactersWithClosure()
         }
     }
     
@@ -89,8 +89,8 @@ class ListViewModel {
             .store(in: &cancellables)
     }
     
-    private func fetchCharactersWithCompletion() {
-        completionService.fetchCharacters { [weak self] result in
+    private func fetchCharactersWithClosure() {
+        closureService.fetchCharacters { [weak self] result in
             guard let self else { return }
             
             switch result {

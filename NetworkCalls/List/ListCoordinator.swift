@@ -16,7 +16,7 @@ class ListCoordinator: Coordinator {
     }
     
     func start() {
-        let viewModel = ListViewModel(serviceType: .completion)
+        let viewModel = ListViewModel(serviceType: .async)
         let viewController = ListViewController(viewModel: viewModel)
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.pushViewController(viewController, animated: true)

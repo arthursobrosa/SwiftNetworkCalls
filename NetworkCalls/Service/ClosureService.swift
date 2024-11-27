@@ -1,5 +1,5 @@
 //
-//  CompletionService.swift
+//  ClosureService.swift
 //  NetworkCalls
 //
 //  Created by Arthur Sobrosa on 26/11/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CompletionService {
+class ClosureService {
     private func performRequest<T: Decodable>(_ request: Result<URLRequest, NetworkError>, completion: @escaping (Result<T, NetworkError>) -> Void) {
         var urlRequest: URLRequest
         

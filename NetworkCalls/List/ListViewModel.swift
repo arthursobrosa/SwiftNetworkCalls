@@ -11,17 +11,19 @@ import Foundation
 class ListViewModel {
     // MARK: - Service to get model
     
+    private let alamofireService: AlamofireService
     private let asyncService: AsyncService
-    private let combineService: CombineService
     private let closureService: ClosureService
+    private let combineService: CombineService
     
     // MARK: - Properties
     
     /// defines the way service will be called
     enum ServiceType {
+        case alamofire
         case async
-        case combine
         case closure
+        case combine
     }
     
     private let serviceType: ServiceType
@@ -35,14 +37,16 @@ class ListViewModel {
     
     // MARK: - Initializer
     
-    init(asyncService: AsyncService = AsyncService(),
-         combineService: CombineService = CombineService(),
+    init(alamofireService: AlamofireService = AlamofireService(),
+         asyncService: AsyncService = AsyncService(),
          closureService: ClosureService = ClosureService(),
+         combineService: CombineService = CombineService(),
          serviceType: ServiceType) {
         
+        self.alamofireService = alamofireService
         self.asyncService = asyncService
-        self.combineService = combineService
         self.closureService = closureService
+        self.combineService = combineService
         self.serviceType = serviceType
     }
     
@@ -50,12 +54,25 @@ class ListViewModel {
     
     func fetchCharacters() {
         switch serviceType {
+        case .alamofire:
+            fetchCharactersWithAlamofire()
         case .async:
             fetchCharactersWithAsync()
-        case .combine:
-            fetchCharactersWithCombine()
         case .closure:
             fetchCharactersWithClosure()
+        case .combine:
+            fetchCharactersWithCombine()
+        }
+    }
+    
+    private func fetchCharactersWithAlamofire() {
+        Task {
+            do {
+                let characters = try await alamofireService.fetchCharacters()
+                onFetchCharacters?(characters)
+            } catch let error {
+                onFetchError?(error.localizedDescription)
+            }
         }
     }
     
@@ -65,6 +82,19 @@ class ListViewModel {
                 let characters = try await asyncService.fetchCharacters()
                 onFetchCharacters?(characters)
             } catch let error {
+                onFetchError?(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func fetchCharactersWithClosure() {
+        closureService.fetchCharacters { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let characters):
+                onFetchCharacters?(characters)
+            case .failure(let error):
                 onFetchError?(error.localizedDescription)
             }
         }
@@ -87,18 +117,5 @@ class ListViewModel {
                 onFetchCharacters?(characters)
             }
             .store(in: &cancellables)
-    }
-    
-    private func fetchCharactersWithClosure() {
-        closureService.fetchCharacters { [weak self] result in
-            guard let self else { return }
-            
-            switch result {
-            case .success(let characters):
-                onFetchCharacters?(characters)
-            case .failure(let error):
-                onFetchError?(error.localizedDescription)
-            }
-        }
     }
 }

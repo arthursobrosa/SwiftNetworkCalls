@@ -16,7 +16,7 @@ class ListCoordinator: Coordinator {
     }
     
     func start() {
-        let viewModel = ListViewModel(serviceType: .async)
+        let viewModel = ListViewModel(serviceType: .alamofire)
         let viewController = ListViewController(viewModel: viewModel)
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.pushViewController(viewController, animated: true)

@@ -50,9 +50,7 @@ class AsyncService {
         
         await withTaskGroup(of: Void.self) { group in
             for (index, character) in characters.enumerated() {
-                print("added task \(index)")
                 group.addTask {
-                    print("performing taks \(index)")
                     do {
                         charactersWithImage[index].imageData = try await self.fetchImageData(from: character.imagePath)
                     } catch let error {

@@ -48,11 +48,17 @@ class AsyncService {
     private func fetchImages(for characters: [Character]) async -> [Character] {
         var charactersWithImage = characters
         
-        for (index, character) in characters.enumerated() {
-            do {
-                charactersWithImage[index].imageData = try await fetchImageData(from: character.imagePath)
-            } catch let error {
-                print(error.localizedDescription)
+        await withTaskGroup(of: Void.self) { group in
+            for (index, character) in characters.enumerated() {
+                print("added task \(index)")
+                group.addTask {
+                    print("performing taks \(index)")
+                    do {
+                        charactersWithImage[index].imageData = try await self.fetchImageData(from: character.imagePath)
+                    } catch let error {
+                        print(error.localizedDescription)
+                    }
+                }
             }
         }
         
